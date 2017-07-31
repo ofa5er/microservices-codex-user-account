@@ -295,7 +295,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from .views import CreateView
 
 urlpatterns = {
-    url(r'^useraccount/$', CreateView.as_view(), name="create"),
+    url(r'^useraccounts/$', CreateView.as_view(), name="create"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
@@ -323,5 +323,87 @@ python manage.py test
 ```
 
 Then we run the server and enter the URL (http//127.0.0.1:8000/useraccount) in the browser.
+
+### Step 1.3 - Develop the Read, Update and Delete methods
+
+#### Tests
+
+Again since we are using a TDD approach, we start by write the tests.
+
+```python
+ # api/tests.py
+    def test_api_can_get_a_user_account(self):
+        """Test the api can get a given user_account."""
+        user_account = UserAccount.objects.get()
+        response = self.client.get(
+            reverse('details'),
+            kwargs={'pk': user_account.uid}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, user_account)
+
+    def test_api_can_update_user_account(self):
+        """Test the api can update a given user_account."""
+        change_user_account = {'name': 'new name'}
+        res = self.client.put(
+            reverse('details', kwargs={'pk': user_account.uid}),
+            change_user_account, format='json'
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_api_can_delete_user_account(self):
+        """Test the api can delete a user_account."""
+        user_account = UserAccount.objects.get()
+        response = self.client.delete(
+            reverse('details', kwargs={'pk': user_account.uid}),
+            format='json',
+            follow=True)
+
+        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+
+```
+
+If we run the tests they should fail.
+
+#### Create the Views
+
+Add the following code to `views.py` file
+
+```python
+# api/views.py
+class DetailsView(generics.RetrieveUpdateDestroyAPIView):
+    """This class handles the http GET, PUT and DELETE requests."""
+
+    queryset = UserAccount.objects.all()
+    serializer_class = UserAccountSerializer
+```
+
+#### Update Urls
+
+Add the following code to `urls.py` file
+
+```python
+# api/urls.py
+from .views import DetailsView 
+
+url(r'^useraccounts/(?P<pk>[0-9]+)/$',
+     DetailsView.as_view(), name="details"),
+```
+
+#### Result
+
+Make sure that the tests run successfully using the following command.
+
+```bash
+python manage.py test
+```
+
+Then run the server. Now you can edit the exisiting user account.
+
+```bash
+python manage.py runserver
+```
+
+Good Job, you finished the first part of this tutorial !!
 
 ## Step2 - Containerizing a Django Microservices

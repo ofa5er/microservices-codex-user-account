@@ -12,3 +12,9 @@ class CreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         """Save the post data when creating a new user account."""
         serializer.save()
+
+class DetailsView(generics.RetrieveUpdateDestroyAPIView):
+    """This class handles the http GET, PUT and DELETE requests."""
+
+    queryset = UserAccount.objects.all()
+    serializer_class = UserAccountSerializer

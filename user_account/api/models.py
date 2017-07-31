@@ -7,8 +7,8 @@ class   UserAccount(models.Model):
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=True)
-    billing_address  = models.CharField(max_length=255, blank=True)
-    shipping_address  = models.CharField(max_length=255, blank=True)
+    billing_address = models.CharField(max_length=255, blank=True)
+    shipping_address = models.CharField(max_length=255, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
